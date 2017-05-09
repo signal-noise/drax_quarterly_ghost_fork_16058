@@ -58,7 +58,7 @@ describe('Local File System Storage', function () {
     });
 
     it('should send correct path to image when date is in Sep 2013', function (done) {
-        localFileStore.save(image).then(function (url) {
+        localFileStore.save(image, 'images').then(function (url) {
             url.should.equal('/content/images/2013/09/IMAGE.jpg');
 
             done();
@@ -67,7 +67,7 @@ describe('Local File System Storage', function () {
 
     it('should send correct path to image when original file has spaces', function (done) {
         image.name = 'AN IMAGE.jpg';
-        localFileStore.save(image).then(function (url) {
+        localFileStore.save(image, 'images').then(function (url) {
             url.should.equal('/content/images/2013/09/AN-IMAGE.jpg');
 
             done();
@@ -76,7 +76,7 @@ describe('Local File System Storage', function () {
 
     it('should allow "@" symbol to image for Apple hi-res (retina) modifier', function (done) {
         image.name = 'photo@2x.jpg';
-        localFileStore.save(image).then(function (url) {
+        localFileStore.save(image, 'images').then(function (url) {
             url.should.equal('/content/images/2013/09/photo@2x.jpg');
 
             done();
@@ -86,7 +86,7 @@ describe('Local File System Storage', function () {
     it('should send correct path to image when date is in Jan 2014', function (done) {
         fakeDate(1, 2014);
 
-        localFileStore.save(image).then(function (url) {
+        localFileStore.save(image, 'images').then(function (url) {
             url.should.equal('/content/images/2014/01/IMAGE.jpg');
 
             done();
@@ -94,7 +94,7 @@ describe('Local File System Storage', function () {
     });
 
     it('should create month and year directory', function (done) {
-        localFileStore.save(image).then(function () {
+        localFileStore.save(image, 'images').then(function () {
             fs.mkdirs.calledOnce.should.be.true();
             fs.mkdirs.args[0][0].should.equal(path.resolve('./content/images/2013/09'));
 
@@ -103,7 +103,7 @@ describe('Local File System Storage', function () {
     });
 
     it('should copy temp file to new location', function (done) {
-        localFileStore.save(image).then(function () {
+        localFileStore.save(image, 'images').then(function () {
             fs.copy.calledOnce.should.be.true();
             fs.copy.args[0][0].should.equal('tmp/123456.jpg');
             fs.copy.args[0][1].should.equal(path.resolve('./content/images/2013/09/IMAGE.jpg'));
@@ -121,7 +121,7 @@ describe('Local File System Storage', function () {
         fs.stat.withArgs(path.resolve('.\\content\\images\\2013\\Sep\\IMAGE.jpg')).yields(false);
         fs.stat.withArgs(path.resolve('.\\content\\images\\2013\\Sep\\IMAGE-1.jpg')).yields(true);
 
-        localFileStore.save(image).then(function (url) {
+        localFileStore.save(image, 'images').then(function (url) {
             url.should.equal('/content/images/2013/09/IMAGE-1.jpg');
 
             done();
@@ -142,7 +142,7 @@ describe('Local File System Storage', function () {
         fs.stat.withArgs(path.resolve('.\\content\\images\\2013\\Sep\\IMAGE-3.jpg')).yields(false);
         fs.stat.withArgs(path.resolve('.\\content\\images\\2013\\Sep\\IMAGE-4.jpg')).yields(true);
 
-        localFileStore.save(image).then(function (url) {
+        localFileStore.save(image, 'images').then(function (url) {
             url.should.equal('/content/images/2013/09/IMAGE-4.jpg');
 
             done();
@@ -153,7 +153,7 @@ describe('Local File System Storage', function () {
         it('name contains a .\d as extension', function (done) {
             localFileStore.save({
                 name: 'test-1.1.1'
-            }).then(function (url) {
+            }, 'images').then(function (url) {
                 should.exist(url.match(/test-1.1.1/));
                 done();
             }).catch(done);
@@ -162,7 +162,7 @@ describe('Local File System Storage', function () {
         it('name contains a .zip as extension', function (done) {
             localFileStore.save({
                 name: 'test-1.1.1.zip'
-            }).then(function (url) {
+            }, 'images').then(function (url) {
                 should.exist(url.match(/test-1.1.1.zip/));
                 done();
             }).catch(done);
@@ -171,7 +171,7 @@ describe('Local File System Storage', function () {
         it('name contains a .jpeg as extension', function (done) {
             localFileStore.save({
                 name: 'test-1.1.1.jpeg'
-            }).then(function (url) {
+            }, 'images').then(function (url) {
                 should.exist(url.match(/test-1.1.1.jpeg/));
                 done();
             }).catch(done);
@@ -191,7 +191,7 @@ describe('Local File System Storage', function () {
         });
 
         it('should send the correct path to image', function (done) {
-            localFileStore.save(image).then(function (url) {
+            localFileStore.save(image, 'images').then(function (url) {
                 url.should.equal('/content/images/2013/09/IMAGE.jpg');
 
                 done();
@@ -214,7 +214,7 @@ describe('Local File System Storage', function () {
         it('should return url in proper format for windows', function (done) {
             path.sep = '\\';
             path.join.returns('content\\images\\2013\\09\\IMAGE.jpg');
-            localFileStore.save(image).then(function (url) {
+            localFileStore.save(image, 'images').then(function (url) {
                 if (truePathSep === '\\') {
                     url.should.equal('/content/images/2013/09/IMAGE.jpg');
                 } else {

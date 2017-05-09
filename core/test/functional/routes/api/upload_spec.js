@@ -35,100 +35,169 @@ describe('Upload API', function () {
         }).catch(done);
     });
 
-    describe('success cases', function () {
-        it('valid png', function (done) {
-            request.post(testUtils.API.getApiQuery('uploads'))
-                .set('Authorization', 'Bearer ' + accesstoken)
-                .expect('Content-Type', /json/)
-                .attach('uploadimage',  path.join(__dirname, '/../../../utils/fixtures/images/ghost-logo.png'))
-                .expect(200)
-                .end(function (err, res) {
-                    if (err) {
-                        return done(err);
-                    }
+    describe('images', function () {
+        describe('success cases', function () {
+            it('valid png', function (done) {
+                request.post(testUtils.API.getApiQuery('images/uploads'))
+                    .set('Authorization', 'Bearer ' + accesstoken)
+                    .expect('Content-Type', /json/)
+                    .attach('uploadimage',  path.join(__dirname, '/../../../utils/fixtures/images/ghost-logo.png'))
+                    .expect(200)
+                    .end(function (err, res) {
+                        if (err) {
+                            return done(err);
+                        }
 
-                    images.push(res.body);
-                    done();
-                });
+                        images.push(res.body);
+                        done();
+                    });
+            });
+
+            it('valid jpg', function (done) {
+                request.post(testUtils.API.getApiQuery('images/uploads'))
+                    .set('Authorization', 'Bearer ' + accesstoken)
+                    .expect('Content-Type', /json/)
+                    .attach('uploadimage',  path.join(__dirname, '/../../../utils/fixtures/images/ghosticon.jpg'))
+                    .expect(200)
+                    .end(function (err, res) {
+                        if (err) {
+                            return done(err);
+                        }
+
+                        images.push(res.body);
+                        done();
+                    });
+            });
+
+            it('valid gif', function (done) {
+                request.post(testUtils.API.getApiQuery('images/uploads'))
+                    .set('Authorization', 'Bearer ' + accesstoken)
+                    .expect('Content-Type', /json/)
+                    .attach('uploadimage',  path.join(__dirname, '/../../../utils/fixtures/images/loadingcat.gif'))
+                    .expect(200)
+                    .end(function (err, res) {
+                        if (err) {
+                            return done(err);
+                        }
+
+                        images.push(res.body);
+                        done();
+                    });
+            });
         });
 
-        it('valid jpg', function (done) {
-            request.post(testUtils.API.getApiQuery('uploads'))
-                .set('Authorization', 'Bearer ' + accesstoken)
-                .expect('Content-Type', /json/)
-                .attach('uploadimage',  path.join(__dirname, '/../../../utils/fixtures/images/ghosticon.jpg'))
-                .expect(200)
-                .end(function (err, res) {
-                    if (err) {
-                        return done(err);
-                    }
+        describe('error cases', function () {
+            it('import should fail without file', function (done) {
+                request.post(testUtils.API.getApiQuery('images/uploads'))
+                    .set('Authorization', 'Bearer ' + accesstoken)
+                    .expect('Content-Type', /json/)
+                    .expect(403)
+                    .end(function (err) {
+                        if (err) {
+                            return done(err);
+                        }
 
-                    images.push(res.body);
-                    done();
-                });
-        });
+                        done();
+                    });
+            });
 
-        it('valid gif', function (done) {
-            request.post(testUtils.API.getApiQuery('uploads'))
-                .set('Authorization', 'Bearer ' + accesstoken)
-                .expect('Content-Type', /json/)
-                .attach('uploadimage',  path.join(__dirname, '/../../../utils/fixtures/images/loadingcat.gif'))
-                .expect(200)
-                .end(function (err, res) {
-                    if (err) {
-                        return done(err);
-                    }
+            it('import should fail with unsupported file', function (done) {
+                request.post(testUtils.API.getApiQuery('images/uploads'))
+                    .set('Authorization', 'Bearer ' + accesstoken)
+                    .expect('Content-Type', /json/)
+                    .attach('uploadimage',  path.join(__dirname, '/../../../utils/fixtures/csv/single-column-with-header.csv'))
+                    .expect(415)
+                    .end(function (err) {
+                        if (err) {
+                            return done(err);
+                        }
 
-                    images.push(res.body);
-                    done();
-                });
+                        done();
+                    });
+            });
+
+            it('incorrect extension', function (done) {
+                request.post(testUtils.API.getApiQuery('images/uploads'))
+                    .set('Authorization', 'Bearer ' + accesstoken)
+                    .set('content-type', 'image/png')
+                    .expect('Content-Type', /json/)
+                    .attach('uploadimage',  path.join(__dirname, '/../../../utils/fixtures/images/ghost-logo.pngx'))
+                    .expect(415)
+                    .end(function (err) {
+                        if (err) {
+                            return done(err);
+                        }
+
+                        done();
+                    });
+            });
         });
     });
 
-    describe('error cases', function () {
-        it('import should fail without file', function (done) {
-            request.post(testUtils.API.getApiQuery('uploads'))
-                .set('Authorization', 'Bearer ' + accesstoken)
-                .expect('Content-Type', /json/)
-                .expect(403)
-                .end(function (err) {
-                    if (err) {
-                        return done(err);
-                    }
+    describe('documents', function () {
+        describe('success cases', function () {
+            it('valid pdf', function (done) {
+                request.post(testUtils.API.getApiQuery('documents/uploads'))
+                    .set('Authorization', 'Bearer ' + accesstoken)
+                    .expect('Content-Type', /json/)
+                    .attach('uploaddocument',  path.join(__dirname, '/../../../utils/fixtures/documents/ghost-logo.pdf'))
+                    .expect(200)
+                    .end(function (err, res) {
+                        if (err) {
+                            return done(err);
+                        }
 
-                    done();
-                });
+                        images.push(res.body);
+                        done();
+                    });
+            });
         });
 
-        it('import should fail with unsupported file', function (done) {
-            request.post(testUtils.API.getApiQuery('uploads'))
-                .set('Authorization', 'Bearer ' + accesstoken)
-                .expect('Content-Type', /json/)
-                .attach('uploadimage',  path.join(__dirname, '/../../../utils/fixtures/csv/single-column-with-header.csv'))
-                .expect(415)
-                .end(function (err) {
-                    if (err) {
-                        return done(err);
-                    }
+        describe('error cases', function () {
+            it('import should fail without file', function (done) {
+                request.post(testUtils.API.getApiQuery('documents/uploads'))
+                    .set('Authorization', 'Bearer ' + accesstoken)
+                    .expect('Content-Type', /json/)
+                    .expect(403)
+                    .end(function (err) {
+                        if (err) {
+                            return done(err);
+                        }
 
-                    done();
-                });
-        });
+                        done();
+                    });
+            });
 
-        it('incorrect extension', function (done) {
-            request.post(testUtils.API.getApiQuery('uploads'))
-                .set('Authorization', 'Bearer ' + accesstoken)
-                .set('content-type', 'image/png')
-                .expect('Content-Type', /json/)
-                .attach('uploadimage',  path.join(__dirname, '/../../../utils/fixtures/images/ghost-logo.pngx'))
-                .expect(415)
-                .end(function (err) {
-                    if (err) {
-                        return done(err);
-                    }
+            it('import should fail with unsupported file', function (done) {
+                request.post(testUtils.API.getApiQuery('documents/uploads'))
+                    .set('Authorization', 'Bearer ' + accesstoken)
+                    .expect('Content-Type', /json/)
+                    .attach('uploaddocument',  path.join(__dirname, '/../../../utils/fixtures/csv/single-column-with-header.csv'))
+                    .expect(415)
+                    .end(function (err) {
+                        if (err) {
+                            return done(err);
+                        }
 
-                    done();
-                });
+                        done();
+                    });
+            });
+
+            it('incorrect extension', function (done) {
+                request.post(testUtils.API.getApiQuery('documents/uploads'))
+                    .set('Authorization', 'Bearer ' + accesstoken)
+                    .set('content-type', 'application/pdf')
+                    .expect('Content-Type', /json/)
+                    .attach('uploaddocument',  path.join(__dirname, '/../../../utils/fixtures/documents/ghost-logo.pdfx'))
+                    .expect(415)
+                    .end(function (err) {
+                        if (err) {
+                            return done(err);
+                        }
+
+                        done();
+                    });
+            });
         });
     });
 });

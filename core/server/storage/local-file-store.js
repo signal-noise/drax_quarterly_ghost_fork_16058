@@ -25,8 +25,8 @@ util.inherits(LocalFileStore, BaseStore);
 // - type is the upload type: files or documents
 // - returns a promise which ultimately returns the full url to the uploaded file
 LocalFileStore.prototype.save = function (file, type, targetDir) {
-    var fileTypePath = config.paths[`${type}Path`];
-    var fileTypeRelPath = config.paths[`${type}RelPath`];
+    var fileTypePath = config.paths[type + 'Path'];
+    var fileTypeRelPath = config.paths[type + 'RelPath'];
     var targetFilename;
 
     if (!type || !fileTypePath || !fileTypeRelPath) {
@@ -101,7 +101,7 @@ LocalFileStore.prototype.serve = function (options) {
         };
     } else {
         var type = options.type || 'images';
-        var typePath = `${type}Path`;
+        var typePath = type + 'Path';
 
         // CASE: serve images and documents
         // For some reason send divides the max age number by 1000

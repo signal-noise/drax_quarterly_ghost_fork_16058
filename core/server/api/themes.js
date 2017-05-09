@@ -69,7 +69,7 @@ themes = {
                 return storageAdapter.save({
                     name: zip.shortName,
                     path: theme.path
-                }, config.paths.themePath);
+                }, 'images', config.paths.themePath);
             })
             .then(function () {
                 // force reload of availableThemes
@@ -121,7 +121,7 @@ themes = {
         return utils.handlePermissions('themes', 'read')(options)
             .then(function () {
                 events.emit('theme.downloaded', themeName);
-                return storageAdapter.serve({isTheme: true, name: themeName});
+                return storageAdapter.serve({isTheme: true, name: themeName}, {type: 'images'});
             });
     },
 

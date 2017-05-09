@@ -227,8 +227,10 @@ ConfigManager.prototype.set = function (config) {
             appPath:          path.resolve(contentPath, 'apps'),
             dataPath:         path.resolve(contentPath, 'data'),
             imagesPath:       path.resolve(contentPath, 'images'),
+            documentsPath:    path.resolve(contentPath, 'documents'),
             internalAppPath:  path.join(corePath, '/server/apps/'),
             imagesRelPath:    'content/images',
+            documentsRelPath: 'content/documents',
 
             adminViews:       path.join(corePath, '/server/views/'),
             helperTemplates:  path.join(corePath, '/server/helpers/tpl/'),
@@ -276,6 +278,10 @@ ConfigManager.prototype.set = function (config) {
             images: {
                 extensions: ['.jpg', '.jpeg', '.gif', '.png', '.svg', '.svgz'],
                 contentTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/svg+xml']
+            },
+            documents: {
+                extensions: ['.pdf'],
+                contentTypes: ['application/pdf'],
             },
             db: {
                 extensions: ['.json', '.zip'],

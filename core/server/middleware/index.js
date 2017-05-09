@@ -128,7 +128,8 @@ setupMiddleware = function setupMiddleware(blogApp) {
         path.join(corePath, '/shared'),
         {maxAge: utils.ONE_HOUR_MS, fallthrough: false}
     ));
-    blogApp.use('/content/images', storage.getStorage().serve());
+    blogApp.use('/content/images', storage.getStorage().serve({type: 'images'}));
+    blogApp.use('/content/documents', storage.getStorage().serve({type: 'documents'}));
     blogApp.use('/public', serveStatic(
         path.join(corePath, '/built/public'),
         {maxAge: utils.ONE_YEAR_MS, fallthrough: false}

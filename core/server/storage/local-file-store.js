@@ -20,23 +20,31 @@ function LocalFileStore() {
 util.inherits(LocalFileStore, BaseStore);
 
 // ### Save
-// Saves the image to storage (the file system)
-// - image is the express image object
-// - returns a promise which ultimately returns the full url to the uploaded image
-LocalFileStore.prototype.save = function (image, targetDir) {
-    targetDir = targetDir || this.getTargetDir(config.paths.imagesPath);
+// Saves the file to storage (the file system)
+// - file is the express file object
+// - type is the upload type: files or documents
+// - returns a promise which ultimately returns the full url to the uploaded file
+LocalFileStore.prototype.save = function (file, type, targetDir) {
+    var fileTypePath = config.paths[`${type}Path`];
+    var fileTypeRelPath = config.paths[`${type}RelPath`];
     var targetFilename;
 
-    return this.getUniqueFileName(this, image, targetDir).then(function (filename) {
+    if (!type || !fileTypePath || !fileTypeRelPath) {
+        throw new errors.IncorrectUsage('Incorrect file type was specified for: ' + file.name);
+    }
+
+    targetDir = targetDir || this.getTargetDir(fileTypePath);
+
+    return this.getUniqueFileName(this, file, targetDir).then(function (filename) {
         targetFilename = filename;
         return Promise.promisify(fs.mkdirs)(targetDir);
     }).then(function () {
-        return Promise.promisify(fs.copy)(image.path, targetFilename);
+        return Promise.promisify(fs.copy)(file.path, targetFilename);
     }).then(function () {
-        // The src for the image must be in URI format, not a file system path, which in Windows uses \
+        // The src for the file must be in URI format, not a file system path, which in Windows uses \
         // For local file system storage can use relative path so add a slash
-        var fullUrl = (config.paths.subdir + '/' + config.paths.imagesRelPath + '/' +
-        path.relative(config.paths.imagesPath, targetFilename)).replace(new RegExp('\\' + path.sep, 'g'), '/');
+        var fullUrl = (config.paths.subdir + '/' + fileTypeRelPath + '/' +
+        path.relative(fileTypePath, targetFilename)).replace(new RegExp('\\' + path.sep, 'g'), '/');
         return fullUrl;
     }).catch(function (e) {
         errors.logError(e);
@@ -92,10 +100,13 @@ LocalFileStore.prototype.serve = function (options) {
                 });
         };
     } else {
-        // CASE: serve images
+        var type = options.type || 'images';
+        var typePath = `${type}Path`;
+
+        // CASE: serve images and documents
         // For some reason send divides the max age number by 1000
         // Fallthrough: false ensures that if an image isn't found, it automatically 404s
-        return serveStatic(config.paths.imagesPath, {maxAge: utils.ONE_YEAR_MS, fallthrough: false});
+        return serveStatic(config.paths[typePath], {maxAge: utils.ONE_YEAR_MS, fallthrough: false});
     }
 };
 

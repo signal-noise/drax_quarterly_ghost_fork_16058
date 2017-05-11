@@ -3,4 +3,4 @@
 	url = https://github.com/TryGhost/Casper.git
 [submodule "core/client"]
 	path = core/client
-	url = https://github.com/khaitu/Ghost-Admin.git
+  url = git@bitbucket.org:signalnoise/16058_drax_quarterly_ghost_admin_fork.git

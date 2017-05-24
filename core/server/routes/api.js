@@ -169,12 +169,18 @@ apiRoutes = function apiRoutes(middleware) {
     router.post('/authentication/revoke', authenticatePrivate, api.http(api.authentication.revoke));
 
     // ## Uploads
-    // @TODO: rename endpoint to /images/upload (or similar)
-    router.post('/uploads',
+    router.post('/images/uploads',
         authenticatePrivate,
         middleware.upload.single('uploadimage'),
         middleware.validation.upload({type: 'images'}),
-        api.http(api.uploads.add)
+        api.http(api.uploads.add({type: 'images'}))
+    );
+
+    router.post('/documents/uploads',
+        authenticatePrivate,
+        middleware.upload.single('uploaddocument'),
+        middleware.validation.upload({type: 'documents'}),
+        api.http(api.uploads.add({type: 'documents'}))
     );
 
     // API Router middleware

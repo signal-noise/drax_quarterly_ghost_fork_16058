@@ -370,6 +370,10 @@
                 "missingFile": "Please select an image.",
                 "invalidFile": "Please select a valid image."
             },
+            "documents": {
+                "missingFile": "Please select a document.",
+                "invalidFile": "Please select a valid document."
+            },
             "users": {
                 "userNotFound": "User not found.",
                 "cannotChangeOwnRole": "You cannot change your own role.",

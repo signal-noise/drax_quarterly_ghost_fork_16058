@@ -18,14 +18,18 @@ upload = {
      * @param {{context}} options
      * @returns {Promise<String>} location of uploaded file
      */
-    add: Promise.method(function (options) {
-        var store = storage.getStorage();
+    add: function(options) {
+        var type = options.type;
 
-        return store.save(options).finally(function () {
-            // Remove uploaded file from tmp location
-            return pUnlink(options.path);
+        return Promise.method(function (options) {
+            var store = storage.getStorage();
+
+            return store.save(options, type).finally(function () {
+                // Remove uploaded file from tmp location
+                return pUnlink(options.path);
+            });
         });
-    })
+    }
 };
 
 module.exports = upload;
